@@ -8,11 +8,6 @@ namespace CosmosFunction
 {
     public static class SCICosmosFunction
     {
-        static string lastIdExecuted = string.Empty;
-
-        static DocumentClient documentClient = new DocumentClient(new System.Uri("https://rsamorim.documents.azure.com:443/"), 
-            "tMaooTljM32BJcjg3tNCBL51ANZNJ2HaelT3jYlaM07TaYFht8IHMRLaQtmLbGYWNMQPT1c8z2OiMxq0l9P7cQ==");
-        
         [FunctionName("SCICosmosFunction")]
         public static void Run([CosmosDBTrigger(
             databaseName: "SampleCosmos",
@@ -21,15 +16,10 @@ namespace CosmosFunction
             LeaseCollectionName = "leases")]IReadOnlyList<Document> documents, TraceWriter log)
         {
            
-            if (documents != null && documents.Count > 0 && lastIdExecuted != documents[0].Id)
+            if (documents != null && documents.Count > 0)
             {
-                var document = documents[0];
-
-                document.SetPropertyValue("Name", $"SCFI MACKENZIE {System.DateTime.Now.ToString()}");
-               
-                documentClient.ReplaceDocumentAsync(document);
-                
-                lastIdExecuted = documents[0].Id;
+                log.Verbose("Documents modified " + documents.Count);
+                log.Verbose("First document Id " + documents[0].Id);
 
             }
         }  
